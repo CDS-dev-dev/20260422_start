@@ -6,14 +6,22 @@ on:
   pull_request_review_comment:
     types: [created]
 
+permissions:
+  id-token: write
+  contents: read
+  issues: write
+  pull-requests: write
+
 jobs:
   claude:
     if: contains(github.event.comment.body, '@claude')
     runs-on: ubuntu-latest
     steps:
       - uses: anthropics/claude-code-action@beta
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ap-northeast-1
+          CLAUDE_CODE_USE_BEDROCK: "1"
         with:
           use_bedrock: "true"
-          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws_region: ap-northeast-1
